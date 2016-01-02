@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">MovieApp</string>
+    <string name="action_settings">Settings</string>
+    <string name="refresh_settings">Refresh</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_setting">Setting_Activity</string>
+    <string name="title_activity_detail">DetailActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+
+
+    <string name="pref_sort_label">Sorted By</string>
+
+    <!-- Label for Most Popular option  -->
+    <string name="pref_sort_label_most">Most Popular</string>
+
+    <!-- Label for Highest Rated option  -->
+    <string name="pref_sort_label_rate">Highest Rated</string>
+
+    <!-- Label for Highest Rated option  -->
+    <string name="pref_sort_label_favorite">Highest Rated</string>
+
+    <!-- Key name for sorting preference in SharedPreferences -->
+    <string name="pref_sort_key" translatable="false">Sort</string>
+
+    <!-- Value in SharedPreferences for most-popular  -->
+    <string name="pref_sort_most" translatable="false">popularity.desc</string>
+
+    <!-- Value in SharedPreferences for highest-rated -->
+    <string name="pref_sort_rate" translatable="false">highest-rated</string>
+
+    <!-- Value in SharedPreferences for highest-rated -->
+    <string name="pref_sort_favorite" translatable="false">favorite</string>
+
+
+</resources>
