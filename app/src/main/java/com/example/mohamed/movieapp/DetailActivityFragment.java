@@ -40,6 +40,7 @@ public class DetailActivityFragment extends Fragment {
     private Item_Review_Trailer Adapter;
     ListView list_view;
     int NumOfTrailers;
+    String image;
 
     public DetailActivityFragment() {
     }
@@ -51,8 +52,9 @@ public class DetailActivityFragment extends Fragment {
 
 
         Intent intent = getActivity().getIntent();
-        if (intent != null && intent.hasExtra(intent.EXTRA_TEXT)) {
-            id = intent.getStringExtra(intent.EXTRA_TEXT);
+        if (intent != null && intent.hasExtra("id")) {
+            id = intent.getStringExtra("id");
+            image = intent.getStringExtra("image");
         }
 
         list_view = (ListView) rootView.findViewById(R.id.listview);
@@ -225,7 +227,7 @@ public class DetailActivityFragment extends Fragment {
                 detailAdapter = result;
 
                 ImageView img = (ImageView) getView().findViewById(R.id.detail_image_view);
-                Picasso.with(getContext()).load(detailAdapter[1]).into(img);
+                Picasso.with(getContext()).load(image).into(img);
                 TextView title = (TextView) getView().findViewById(R.id.detail_name_text);
                 title.setText(detailAdapter[0]);
                 TextView release_date = (TextView) getView().findViewById(R.id.release_date);

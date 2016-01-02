@@ -85,7 +85,8 @@ public class MainActivityFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String id = id_array[i];
                 Intent intent = new Intent(getActivity(), DetailActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT, id);
+                        .putExtra("id", id)
+                        .putExtra("image",dataAdapter[i].icon);
                 startActivity(intent);
             }
         });

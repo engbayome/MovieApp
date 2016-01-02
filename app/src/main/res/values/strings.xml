@@ -18,7 +18,7 @@
     <string name="pref_sort_label_rate">Highest Rated</string>
 
     <!-- Label for Highest Rated option  -->
-    <string name="pref_sort_label_favorite">Highest Rated</string>
+    <string name="pref_sort_label_favorite">Favorites</string>
 
     <!-- Key name for sorting preference in SharedPreferences -->
     <string name="pref_sort_key" translatable="false">Sort</string>
@@ -30,7 +30,7 @@
     <string name="pref_sort_rate" translatable="false">highest-rated</string>
 
     <!-- Value in SharedPreferences for highest-rated -->
-    <string name="pref_sort_favorite" translatable="false">favorite</string>
+    <string name="pref_sort_favorite" translatable="false">favorites</string>
 
 
 </resources>
