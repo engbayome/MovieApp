@@ -11,6 +11,7 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
+    DatabaseHelper Database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
 //                    .add(R.id.fragment, new MainActivityFragment())
 //                    .commit();
 //        }
+        Database = new DatabaseHelper(this);
     }
 
 

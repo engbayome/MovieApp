@@ -1,6 +1,7 @@
 package com.example.mohamed.movieapp;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import java.util.List;
  * Created by Bayome on 12/25/2015.
  */
 public class Review_Trailer_Adapter extends ArrayAdapter<Item_Review_Trailer> {
+    private final String LOG_TAG = Review_Trailer_Adapter.class.getSimpleName();
     Context context;
     Item_Review_Trailer objects ;
 
@@ -65,7 +67,12 @@ public class Review_Trailer_Adapter extends ArrayAdapter<Item_Review_Trailer> {
             }else if(type == "review")
             {
                 holder = (review_holder)row.getTag();
-                holder.review_author.setText(item.name);
+                try {
+                    holder.review_author.setText(item.name);
+                }catch (NullPointerException e)
+                {
+                    Log.e(LOG_TAG, "Error NullPointerException", e);
+                }
                 holder.review_content.setText(item.desc);
 
             }
