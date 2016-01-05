@@ -149,9 +149,9 @@ public class MainActivityFragment extends Fragment {
                 JSONObject movieData = dataArray.getJSONObject(i);
 
                 img_path = movieData.getString(IMG_PATH);
-                img_path ="http://image.tmdb.org/t/p/w185"+img_path;
-                title = movieData.getString(TITLE);
-                id = movieData.getString(ID);
+                img_path =("http://image.tmdb.org/t/p/w185"+img_path).toString();
+                title = (movieData.getString(TITLE)).toString();
+                id = (movieData.getString(ID)).toString();
 
                 Item element = new Item(id,img_path,title);
 
