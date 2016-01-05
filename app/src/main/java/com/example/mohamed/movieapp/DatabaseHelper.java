@@ -1,5 +1,6 @@
 package com.example.mohamed.movieapp;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -17,17 +18,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, 1);
-        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+
     }
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL("create table "+TABLE_NAME + " ("+ID+" INTEGER PRIMARY KEY,"+IMAGE+" TEXT)");
+        sqLiteDatabase.execSQL("create table "+TABLE_NAME + " ("+ID+" TEXT PRIMARY KEY,"+IMAGE+" TEXT)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS "+TABLE_NAME);
         onCreate(sqLiteDatabase);
+    }
+
+    public boolean InsertMovie (String id,String image){
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(ID, id);
+        contentValues.put(IMAGE, image);
+        long result = sqLiteDatabase.insert(TABLE_NAME, null, contentValues);
+        if (result == -1){
+            return false;
+        }else{
+            return true;
+        }
     }
 }

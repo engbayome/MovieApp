@@ -11,9 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -36,11 +38,12 @@ import java.util.List;
 public class DetailActivityFragment extends Fragment {
 
     private String id;
+    String image;
     private String[] detailAdapter;
     private Item_Review_Trailer Adapter;
     ListView list_view;
     int NumOfTrailers;
-    String image;
+    DatabaseHelper Database;
 
     public DetailActivityFragment() {
     }
@@ -56,9 +59,11 @@ public class DetailActivityFragment extends Fragment {
             id = intent.getStringExtra("id");
             image = intent.getStringExtra("image");
         }
+        Database = new DatabaseHelper(this.getContext());
 
         list_view = (ListView) rootView.findViewById(R.id.listview);
         View header = inflater.inflate(R.layout.header, null ,false);
+        ImageButton favorite = (ImageButton) header.findViewById(R.id.favorit_btn);
         list_view.addHeaderView(header);
 
         list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -73,6 +78,18 @@ public class DetailActivityFragment extends Fragment {
             }
         });
 
+        favorite.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        boolean isInserted = Database.InsertMovie(id,image);
+                        if (isInserted = true){
+                            Toast.makeText(getActivity(),"Data inserted",Toast.LENGTH_LONG).show();
+                        }else{
+                            Toast.makeText(getActivity(),"Data not inserted",Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
         return rootView;
     }
 
