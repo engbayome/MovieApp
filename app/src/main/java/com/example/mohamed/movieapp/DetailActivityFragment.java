@@ -138,13 +138,13 @@ public class DetailActivityFragment extends Fragment {
             String overview;
 
 
-            title = (movieData.getString(TITLE)).toString();
-            img_path = (movieData.getString(IMG_PATH)).toString();
-            img_path = ("http://image.tmdb.org/t/p/w185" + img_path).toString();
-            release_date = (movieData.getString(RELEASE_DATA)).toString();
-            duration = (movieData.getString(DURATION)).toString();
+            title = movieData.getString(TITLE);
+            img_path = movieData.getString(IMG_PATH);
+            img_path = "http://image.tmdb.org/t/p/w185" + img_path;
+            release_date = movieData.getString(RELEASE_DATA);
+            duration = movieData.getString(DURATION);
             rating = movieData.getString(RATING);
-            overview = (movieData.getString(OVERVIEW)).toString();
+            overview = movieData.getString(OVERVIEW);
 
             String[] resultStrs = {title, img_path, release_date, duration, rating, overview};
 
@@ -290,8 +290,8 @@ public class DetailActivityFragment extends Fragment {
 
                 JSONObject ReviewmovieData = ReviewdataArray.getJSONObject(i);
 
-                author = (ReviewmovieData.getString(AUTHOR)).toString();
-                content = (ReviewmovieData.getString(CONTENT)).toString();
+                author = ReviewmovieData.getString(AUTHOR);
+                content = ReviewmovieData.getString(CONTENT);
 
                 Item_Review_Trailer element = new Item_Review_Trailer("review",author, content);
 
@@ -434,9 +434,9 @@ public class DetailActivityFragment extends Fragment {
 
                 JSONObject ReviewmovieData = ReviewdataArray.getJSONObject(i);
 
-                name = (ReviewmovieData.getString(NAME)).toString();
-                link = (ReviewmovieData.getString(KEY)).toString();
-                link = ("https://www.youtube.com/watch?v="+link).toString();
+                name = ReviewmovieData.getString(NAME);
+                link = ReviewmovieData.getString(KEY);
+                link = "https://www.youtube.com/watch?v="+link;
 
                 Item_Review_Trailer element = new Item_Review_Trailer("trailer",name,link);
 
