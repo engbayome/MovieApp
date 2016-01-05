@@ -36,7 +36,7 @@ public class MainActivityFragment extends Fragment {
 
     private Item[] dataAdapter ;
     GridView gridView;
-    private String[] id_array ;
+    DatabaseHelper Database;
 
 
 
@@ -48,6 +48,7 @@ public class MainActivityFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
+        Database = new DatabaseHelper(this.getContext());
     }
 
     @Override
@@ -83,10 +84,9 @@ public class MainActivityFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String id = id_array[i];
                 Intent intent = new Intent(getActivity(), DetailActivity.class)
-                        .putExtra("id", id)
-                        .putExtra("image",dataAdapter[i].icon);
+                        .putExtra("id", dataAdapter[i].id)
+                        .putExtra("image",dataAdapter[i].image);
                 startActivity(intent);
             }
         });
@@ -101,17 +101,20 @@ public class MainActivityFragment extends Fragment {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String location = prefs.getString(getString(R.string.pref_sort_key),
                 getString(R.string.pref_sort_most));
-        DataTask.execute(location);
+        if (location.equals("favorites")){
+            dataAdapter = Database.getData();
+            CustomArrayAdapter adapter =new CustomArrayAdapter(getContext() , R.layout.item , dataAdapter);
+            gridView.setAdapter(adapter);
+            //DataTask.execute(location);
+        }else{
+            DataTask.execute(location);
+        }
     }
 
     @Override
     public void onStart() {
         super.onStart();
         updateData();
-    }
-
-    public Context activityContext() {
-        return this.getContext();
     }
 
 
@@ -126,7 +129,7 @@ public class MainActivityFragment extends Fragment {
             // These are the names of the JSON objects that need to be extracted.
             final String RESULTS = "results";
             final String IMG_PATH = "poster_path";
-            //final String TITLE = "title";
+            final String TITLE = "title";
             final String ID = "id";
 
             JSONObject dataJson = new JSONObject(JsonStr);
@@ -135,10 +138,9 @@ public class MainActivityFragment extends Fragment {
             int numofresults = dataArray.length();
 
             Item[] resultStrs = new Item[numofresults];
-            id_array = new String[numofresults];
 
             String img_path;
-            //String title;
+            String title;
             String id;
 
             for(int i = 0; i < numofresults; i++) {
@@ -148,13 +150,12 @@ public class MainActivityFragment extends Fragment {
 
                 img_path = movieData.getString(IMG_PATH);
                 img_path ="http://image.tmdb.org/t/p/w185"+img_path;
-                //title = movieData.getString(TITLE);
+                title = movieData.getString(TITLE);
                 id = movieData.getString(ID);
 
-                Item element = new Item(img_path);
+                Item element = new Item(id,img_path,title);
 
                 resultStrs[i] = element;
-                id_array[i] = id;
             }
             return resultStrs;
 
@@ -256,12 +257,10 @@ public class MainActivityFragment extends Fragment {
          protected void onPostExecute(Item[] result) {
             if (result != null) {
                 dataAdapter = result;
-                Context activityContext = activityContext();
-                CustomArrayAdapter adapter =new CustomArrayAdapter(activityContext , R.layout.item , dataAdapter);
+                CustomArrayAdapter adapter =new CustomArrayAdapter(getContext() , R.layout.item , dataAdapter);
                 gridView.setAdapter(adapter);
 
             }
-                // New data is back from the server.  Hooray!
         }
 
     }

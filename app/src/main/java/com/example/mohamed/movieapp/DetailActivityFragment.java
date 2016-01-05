@@ -38,7 +38,8 @@ import java.util.List;
 public class DetailActivityFragment extends Fragment {
 
     private String id;
-    String image;
+    private String image;
+    private String Title;
     private String[] detailAdapter;
     private Item_Review_Trailer Adapter;
     ListView list_view;
@@ -82,8 +83,8 @@ public class DetailActivityFragment extends Fragment {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        boolean isInserted = Database.InsertMovie(id,image);
-                        if (isInserted = true){
+                        boolean isInserted = Database.InsertMovie(id,image,Title);
+                        if (isInserted == true){
                             Toast.makeText(getActivity(),"Data inserted",Toast.LENGTH_LONG).show();
                         }else{
                             Toast.makeText(getActivity(),"Data not inserted",Toast.LENGTH_LONG).show();
@@ -147,6 +148,7 @@ public class DetailActivityFragment extends Fragment {
 
             String[] resultStrs = {title, img_path, release_date, duration, rating, overview};
 
+            Title = title;
             return resultStrs;
 
         }

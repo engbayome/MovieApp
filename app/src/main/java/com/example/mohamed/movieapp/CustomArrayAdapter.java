@@ -32,7 +32,7 @@ public class CustomArrayAdapter extends ArrayAdapter<Item> {
     public View getView(int position, View convertView, ViewGroup parent)
     {
         View row = convertView;
-        DataHolder holder = null;
+        DataHolder holder ;
 
         if(row == null)
         {
@@ -41,7 +41,7 @@ public class CustomArrayAdapter extends ArrayAdapter<Item> {
 
             holder = new DataHolder();
             holder.imgIcon = (ImageView)row.findViewById(R.id.image_main_item);
-            //holder.txtTitle = (TextView)row.findViewById(R.id.title_movie);
+            holder.txtTitle = (TextView)row.findViewById(R.id.title_movie);
 
             row.setTag(holder);
         }else
@@ -50,8 +50,8 @@ public class CustomArrayAdapter extends ArrayAdapter<Item> {
         }
 
         Item item = objects[position];
-        //holder.txtTitle.setText(item.title);
-        Picasso.with(context).load(item.icon).into(holder.imgIcon);
+        holder.txtTitle.setText(item.title);
+        Picasso.with(context).load(item.image).into(holder.imgIcon);
 
 
         return row;
@@ -63,6 +63,6 @@ public class CustomArrayAdapter extends ArrayAdapter<Item> {
     static class DataHolder
     {
         ImageView imgIcon;
-        //TextView txtTitle;
+        TextView txtTitle;
     }
 }

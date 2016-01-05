@@ -15,7 +15,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/favorite"
             android:background="#FAFAFA"
-            android:id="@+id/favorit_btn"/>
+            android:id="@+id/favorit_btn"
+            android:onClick="selfDestruct"/>
 
         <ImageView
             android:layout_width="wrap_content"

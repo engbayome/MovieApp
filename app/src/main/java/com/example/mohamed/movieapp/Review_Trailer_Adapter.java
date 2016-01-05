@@ -67,12 +67,7 @@ public class Review_Trailer_Adapter extends ArrayAdapter<Item_Review_Trailer> {
             }else if(type == "review")
             {
                 holder = (review_holder)row.getTag();
-                try {
-                    holder.review_author.setText(item.name);
-                }catch (NullPointerException e)
-                {
-                    Log.e(LOG_TAG, "Error NullPointerException", e);
-                }
+                holder.review_author.setText(item.name);
                 holder.review_content.setText(item.desc);
 
             }
