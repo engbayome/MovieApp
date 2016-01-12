@@ -1,11 +1,13 @@
 package com.example.mohamed.movieapp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,11 +36,12 @@ import java.net.URL;
  */
 public class MainActivityFragment extends Fragment {
 
+
     private Item[] dataAdapter ;
     GridView gridView;
     DatabaseHelper Database;
-
-
+    private callback listener;
+    String FirstJSON;
 
     public MainActivityFragment() {
     }
@@ -48,7 +51,11 @@ public class MainActivityFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
-        Database = new DatabaseHelper(this.getContext());
+
+    }
+
+    public interface callback{
+        public void onItemSelectedListner(String json);
     }
 
     @Override
@@ -76,25 +83,37 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
 
 
-
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         // Get a reference to the ListView, and attach this adapter to it.
         gridView = (GridView) rootView.findViewById(R.id.main_grid_view);
 
+        updateData();
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(getActivity(), DetailActivity.class)
-                        .putExtra("id", dataAdapter[i].id)
-                        .putExtra("image",dataAdapter[i].image);
-                startActivity(intent);
+               updateDetail(dataAdapter[i].json);
             }
         });
-
-
         return rootView;
     }
 
+
+    private void saveFirstMovie(String json){
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("FirstMovie",getContext().MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("json",json);
+        editor.apply();
+    }
+    @Override
+    public void onAttach(Context activity){
+        super.onAttach(activity);
+        listener = (callback) getActivity();
+    }
+
+    public void updateDetail(String json){
+        listener.onItemSelectedListner(json);
+    }
 
     private void updateData() {
         GetData DataTask = new GetData();
@@ -102,10 +121,10 @@ public class MainActivityFragment extends Fragment {
         String location = prefs.getString(getString(R.string.pref_sort_key),
                 getString(R.string.pref_sort_most));
         if (location.equals("favorites")){
+            Database = new DatabaseHelper(this.getContext());
             dataAdapter = Database.getData();
             CustomArrayAdapter adapter =new CustomArrayAdapter(getContext() , R.layout.item , dataAdapter);
             gridView.setAdapter(adapter);
-            //DataTask.execute(location);
         }else{
             DataTask.execute(location);
         }
@@ -142,23 +161,26 @@ public class MainActivityFragment extends Fragment {
             String img_path;
             String title;
             String id;
+            String json;
 
             for(int i = 0; i < numofresults; i++) {
 
 
                 JSONObject movieData = dataArray.getJSONObject(i);
 
+                json = movieData.toString();
                 img_path = movieData.getString(IMG_PATH);
-                img_path =("http://image.tmdb.org/t/p/w185"+img_path).toString();
-                title = (movieData.getString(TITLE)).toString();
-                id = (movieData.getString(ID)).toString();
+                img_path ="http://image.tmdb.org/t/p/w185"+img_path;
+                title = movieData.getString(TITLE);
+                id = movieData.getString(ID);
 
-                Item element = new Item(id,img_path,title);
+                Item element = new Item(id,img_path,title,json);
 
                 resultStrs[i] = element;
             }
+            FirstJSON = resultStrs[0].json;
+            saveFirstMovie(FirstJSON);
             return resultStrs;
-
         }
 
         @Override
@@ -215,21 +237,15 @@ public class MainActivityFragment extends Fragment {
 
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
                     buffer.append(line + "\n");
                 }
 
                 if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
                     return null;
                 }
                 dataJsonStr = buffer.toString();
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attemping
-                // to parse it.
                 return null;
             } finally {
                 if (urlConnection != null) {
@@ -257,9 +273,9 @@ public class MainActivityFragment extends Fragment {
          protected void onPostExecute(Item[] result) {
             if (result != null) {
                 dataAdapter = result;
+                FirstJSON = dataAdapter[0].json;
                 CustomArrayAdapter adapter =new CustomArrayAdapter(getContext() , R.layout.item , dataAdapter);
                 gridView.setAdapter(adapter);
-
             }
         }
 

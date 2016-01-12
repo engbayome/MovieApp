@@ -39,15 +39,32 @@ public class DetailActivityFragment extends Fragment {
 
     private String id;
     private String image;
+    private String json;
     private String Title;
     private String[] detailAdapter;
     private Item_Review_Trailer Adapter;
     ListView list_view;
     int NumOfTrailers;
-    DatabaseHelper Database;
 
-    public DetailActivityFragment() {
+
+    public DetailActivityFragment(){
     }
+
+    public static DetailActivityFragment newInstance(String json){
+        DetailActivityFragment fragment = new DetailActivityFragment();
+
+        Bundle args = new Bundle();
+        args.putString("json",json);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
+
+    public String getShownIndex() {
+        return getArguments().getString("json");
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,17 +72,45 @@ public class DetailActivityFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
 
+
         Intent intent = getActivity().getIntent();
-        if (intent != null && intent.hasExtra("id")) {
-            id = intent.getStringExtra("id");
-            image = intent.getStringExtra("image");
+        if (intent != null && intent.hasExtra("json")) {
+            json = intent.getStringExtra("json");
+        }else
+        {
+            json = getShownIndex();
         }
-        Database = new DatabaseHelper(this.getContext());
+
+        DetailParse detailParseObj = new DetailParse();
+        try {
+            detailAdapter = detailParseObj.parse(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
 
         list_view = (ListView) rootView.findViewById(R.id.listview);
         View header = inflater.inflate(R.layout.header, null ,false);
-        ImageButton favorite = (ImageButton) header.findViewById(R.id.favorit_btn);
         list_view.addHeaderView(header);
+
+        ImageView img = (ImageView) header.findViewById(R.id.detail_image_view);
+        Picasso.with(getContext()).load(detailAdapter[1]).into(img);
+        TextView title = (TextView) header.findViewById(R.id.detail_name_text);
+        title.setText(detailAdapter[0]);
+        TextView release_date = (TextView) header.findViewById(R.id.release_date);
+        release_date.setText(detailAdapter[2]);
+        TextView duration = (TextView) header.findViewById(R.id.duration);
+        duration.setText("100");
+        TextView user_rating = (TextView) header.findViewById(R.id.user_rating);
+        user_rating.setText(detailAdapter[3]);
+        TextView overview = (TextView) header.findViewById(R.id.overview);
+        overview.setText(detailAdapter[4]);
+
+        id = detailAdapter[5];
+        Title = detailAdapter[0];
+        image = detailAdapter[1];
+
+        ImageButton favorite = (ImageButton) header.findViewById(R.id.favorit_btn);
 
         list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -83,7 +128,8 @@ public class DetailActivityFragment extends Fragment {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        boolean isInserted = Database.InsertMovie(id,image,Title);
+                        DatabaseHelper Database = new DatabaseHelper(getContext());
+                        boolean isInserted = Database.InsertMovie(id,image,Title,json);
                         if (isInserted == true){
                             Toast.makeText(getActivity(),"Data inserted",Toast.LENGTH_LONG).show();
                         }else{
@@ -95,8 +141,6 @@ public class DetailActivityFragment extends Fragment {
     }
 
     private void updateData() {
-        GetDetailData DataTask = new GetDetailData();
-        DataTask.execute(id);
         Trailer_Async trailer_async = new Trailer_Async();
         trailer_async.execute(id);
     }
@@ -105,162 +149,6 @@ public class DetailActivityFragment extends Fragment {
     public void onStart() {
         super.onStart();
         updateData();
-    }
-
-
-
-
-    private class GetDetailData extends AsyncTask<String, Void, String[]> {
-
-        private final String LOG_TAG = GetDetailData.class.getSimpleName();
-
-
-        private String[] getDataFromJson(String JsonStr)
-                throws JSONException {
-
-
-            // These are the names of the JSON objects that need to be extracted.
-            final String TITLE = "title";
-            final String IMG_PATH = "backdrop_path";
-            final String RELEASE_DATA = "release_date";
-            final String DURATION = "runtime";
-            final String RATING = "vote_average";
-            final String OVERVIEW = "overview";
-
-            JSONObject movieData = new JSONObject(JsonStr);
-
-
-            String title;
-            String img_path;
-            String release_date;
-            String duration;
-            String rating;
-            String overview;
-
-
-            title = movieData.getString(TITLE);
-            img_path = movieData.getString(IMG_PATH);
-            img_path = "http://image.tmdb.org/t/p/w185" + img_path;
-            release_date = movieData.getString(RELEASE_DATA);
-            duration = movieData.getString(DURATION);
-            rating = movieData.getString(RATING);
-            overview = movieData.getString(OVERVIEW);
-
-            String[] resultStrs = {title, img_path, release_date, duration, rating, overview};
-
-            Title = title;
-            return resultStrs;
-
-        }
-
-        @Override
-        protected String[] doInBackground(String... strings) {
-
-
-            if (strings.length == 0) {
-                return null;
-            }
-
-            String id = strings[0];
-            String api_key = "5c1d3fa899d823cdca9845d785e47b7d";
-
-            // These two need to be declared outside the try/catch
-            // so that they can be closed in the finally block.
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-
-            // Will contain the raw JSON response as a string.
-            String dataJsonStr = null;
-
-            try {
-
-                final String BASE_URL = "http://api.themoviedb.org/3/movie/" + id + "?";
-                final String APPID_PARAM = "api_key";
-
-                Uri builtUri = Uri.parse(BASE_URL).buildUpon()
-                        .appendQueryParameter(APPID_PARAM, api_key)
-                        .build();
-
-                URL url = new URL(builtUri.toString());
-
-
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-
-                // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    // Nothing to do.
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    return null;
-                }
-                dataJsonStr = buffer.toString();
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attemping
-                // to parse it.
-                return null;
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
-                    }
-                }
-            }
-
-            try {
-                return getDataFromJson(dataJsonStr);
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, e.getMessage(), e);
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-
-        @Override
-        protected void onPostExecute(String[] result) {
-            if (result != null) {
-                detailAdapter = result;
-
-                ImageView img = (ImageView) getView().findViewById(R.id.detail_image_view);
-                Picasso.with(getContext()).load(image).into(img);
-                TextView title = (TextView) getView().findViewById(R.id.detail_name_text);
-                title.setText(detailAdapter[0]);
-                TextView release_date = (TextView) getView().findViewById(R.id.release_date);
-                release_date.setText(detailAdapter[2]);
-                TextView duration = (TextView) getView().findViewById(R.id.duration);
-                duration.setText(detailAdapter[3]);
-                TextView user_rating = (TextView) getView().findViewById(R.id.user_rating);
-                user_rating.setText(detailAdapter[4]);
-                TextView overview = (TextView) getView().findViewById(R.id.overview);
-                overview.setText(detailAdapter[5]);
-            }
-            // New data is back from the server.  Hooray!
-        }
-
     }
 
 

@@ -67,7 +67,11 @@ public class Review_Trailer_Adapter extends ArrayAdapter<Item_Review_Trailer> {
             }else if(type == "review")
             {
                 holder = (review_holder)row.getTag();
-                holder.review_author.setText(item.name);
+                if (item.name == null){
+                    holder.review_author.setText("No Name");
+                }else{
+                    holder.review_author.setText(item.name);
+                }
                 holder.review_content.setText(item.desc);
 
             }

@@ -9,10 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/listview"
-        android:divider="@color/colorAccent"
-        android:dividerHeight="4dp">
-
-
-
+        android:divider="#37474F"
+        android:dividerHeight="2dp">
     </ListView>
 </FrameLayout>

@@ -1,29 +1,56 @@
 package com.example.mohamed.movieapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+
+public class MainActivity extends AppCompatActivity implements MainActivityFragment.callback {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
-    DatabaseHelper Database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.v(LOG_TAG, "in onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        if (savedInstanceState == null) {
-//            getSupportFragmentManager().beginTransaction()
-//                    .add(R.id.fragment, new MainActivityFragment())
-//                    .commit();
-//        }
-        Database = new DatabaseHelper(this);
+
+        if (findViewById(R.id.DetailActivityFragment) != null){
+            if (savedInstanceState == null)
+            {
+                String json = getFirstMovie();
+
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.DetailActivityFragment , DetailActivityFragment.newInstance(json))
+                        .commit();
+            }
+        }
+    }
+
+    private String getFirstMovie(){
+        String json;
+        SharedPreferences sharedPreferences = getSharedPreferences("FirstMovie",MODE_PRIVATE);
+        json = sharedPreferences.getString("json","");
+
+        return json;
+    }
+
+    @Override
+    public void onItemSelectedListner(String json) {
+        if (findViewById(R.id.DetailActivityFragment) != null) {
+            DetailActivityFragment detailActivityFragment = DetailActivityFragment.newInstance(json);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.DetailActivityFragment, detailActivityFragment)
+                    .commit();
+        }else {
+            Intent intent = new Intent(this , DetailActivity.class)
+                    .putExtra("json",json);
+            startActivity(intent);
+        }
     }
 
 
@@ -85,5 +112,6 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         // The activity is about to be destroyed.
     }
+
 
 }

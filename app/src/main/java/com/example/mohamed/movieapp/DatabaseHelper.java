@@ -18,11 +18,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String ID = "ID";
     public static final String IMAGE = "IMAGE";
     public static final String TITLE = "TITLE";
+    public static final String JSON = "JSON";
 
 
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, 1);
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
     }
 
     @Override
@@ -30,7 +31,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("create table "+TABLE_NAME + " (" +
                 ID + " TEXT PRIMARY KEY," +
                 IMAGE + " TEXT NOT NULL," +
-                TITLE + " TEXT NOT NULL);"
+                TITLE + " TEXT NOT NULL," +
+                JSON + " TEXT NOT NULL);"
         );
     }
 
@@ -40,12 +42,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
-    public boolean InsertMovie (String id,String image,String title){
+    public boolean InsertMovie (String id,String image,String title,String json){
+        //TODO CHECK IF IT EXIT and remove
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(ID, id);
         contentValues.put(IMAGE,image);
         contentValues.put(TITLE,title);
+        contentValues.put(JSON,json);
         long result = sqLiteDatabase.insert(TABLE_NAME, null, contentValues);
         if (result == -1){
             return false;
@@ -66,6 +70,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Item element = new Item(res.getString(res.getColumnIndex(ID))
                     ,res.getString(res.getColumnIndex(IMAGE))
                     ,res.getString(res.getColumnIndex(TITLE))
+                    ,res.getString(res.getColumnIndex(JSON))
             );
 
             result[i] = element;
