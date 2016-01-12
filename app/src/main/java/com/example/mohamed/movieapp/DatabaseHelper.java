@@ -58,6 +58,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public boolean SelectMovie (String id){
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        String query = "select * from "+TABLE_NAME+" where "+ID+" = "+id;
+        Cursor res =  sqLiteDatabase.rawQuery( query , null );
+        if (res.getCount() > 0){
+            return true;
+        }else {
+            return false;
+        }
+    }
+    public int DeleteMovie(String id){
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        return sqLiteDatabase.delete(TABLE_NAME , " ID = ?" , new String[] {id});
+    }
+
     public Item[] getData(){
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
         Cursor res =  sqLiteDatabase.rawQuery( "select * from "+TABLE_NAME, null );
@@ -67,7 +82,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         res.moveToFirst();
         for (int i = 0 ;i < num ; i++)
         {
-            Item element = new Item(res.getString(res.getColumnIndex(ID))
+            Item element = new Item(
+                     res.getString(res.getColumnIndex(ID))
                     ,res.getString(res.getColumnIndex(IMAGE))
                     ,res.getString(res.getColumnIndex(TITLE))
                     ,res.getString(res.getColumnIndex(JSON))

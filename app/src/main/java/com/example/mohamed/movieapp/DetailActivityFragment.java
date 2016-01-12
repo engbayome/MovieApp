@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.squareup.picasso.Picasso;
 
@@ -45,6 +46,9 @@ public class DetailActivityFragment extends Fragment {
     private Item_Review_Trailer Adapter;
     ListView list_view;
     int NumOfTrailers;
+    DatabaseHelper Database;
+    ToggleButton favorite;
+    boolean isfounded;
 
 
     public DetailActivityFragment(){
@@ -99,8 +103,6 @@ public class DetailActivityFragment extends Fragment {
         title.setText(detailAdapter[0]);
         TextView release_date = (TextView) header.findViewById(R.id.release_date);
         release_date.setText(detailAdapter[2]);
-        TextView duration = (TextView) header.findViewById(R.id.duration);
-        duration.setText("100");
         TextView user_rating = (TextView) header.findViewById(R.id.user_rating);
         user_rating.setText(detailAdapter[3]);
         TextView overview = (TextView) header.findViewById(R.id.overview);
@@ -110,7 +112,7 @@ public class DetailActivityFragment extends Fragment {
         Title = detailAdapter[0];
         image = detailAdapter[1];
 
-        ImageButton favorite = (ImageButton) header.findViewById(R.id.favorit_btn);
+        favorite = (ToggleButton) header.findViewById(R.id.favorit_btn);
 
         list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -124,16 +126,35 @@ public class DetailActivityFragment extends Fragment {
             }
         });
 
+        Database = new DatabaseHelper(getContext());
+        isfounded =Database.SelectMovie(id);
+        if (isfounded){
+            favorite.setTextOff("Favorite");
+        }else {
+            favorite.setTextOn("Un Favorite");
+        }
         favorite.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        DatabaseHelper Database = new DatabaseHelper(getContext());
-                        boolean isInserted = Database.InsertMovie(id,image,Title,json);
-                        if (isInserted == true){
-                            Toast.makeText(getActivity(),"Data inserted",Toast.LENGTH_LONG).show();
-                        }else{
-                            Toast.makeText(getActivity(),"Data not inserted",Toast.LENGTH_LONG).show();
+                        isfounded =Database.SelectMovie(id);
+                        if (isfounded){
+                            int isdeleted = Database.DeleteMovie(id);
+                            if (isdeleted != 0){
+                                Toast.makeText(getActivity(),"Data removed from favorited",Toast.LENGTH_LONG).show();
+                            }else{
+                                Toast.makeText(getActivity(),"Data doesnot from favorited",Toast.LENGTH_LONG).show();
+                            }
+                            favorite.setTextOff("Favorite");
+                        }else
+                        {
+                            boolean isInserted = Database.InsertMovie(id,image,Title,json);
+                            if (isInserted == true){
+                                Toast.makeText(getActivity(),"Data favorited",Toast.LENGTH_LONG).show();
+                            }else{
+                                Toast.makeText(getActivity(),"Data not inserted",Toast.LENGTH_LONG).show();
+                            }
+                            favorite.setTextOn("Un Favorite");
                         }
                     }
                 });
