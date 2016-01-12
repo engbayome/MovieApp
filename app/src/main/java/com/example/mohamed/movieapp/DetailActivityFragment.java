@@ -95,7 +95,7 @@ public class DetailActivityFragment extends Fragment {
 
         list_view = (ListView) rootView.findViewById(R.id.listview);
         View header = inflater.inflate(R.layout.header, null ,false);
-        list_view.addHeaderView(header);
+
 
         ImageView img = (ImageView) header.findViewById(R.id.detail_image_view);
         Picasso.with(getContext()).load(detailAdapter[1]).into(img);
@@ -107,6 +107,8 @@ public class DetailActivityFragment extends Fragment {
         user_rating.setText(detailAdapter[3]);
         TextView overview = (TextView) header.findViewById(R.id.overview);
         overview.setText(detailAdapter[4]);
+
+        list_view.addHeaderView(header);
 
         id = detailAdapter[5];
         Title = detailAdapter[0];
@@ -126,6 +128,7 @@ public class DetailActivityFragment extends Fragment {
             }
         });
 
+
         Database = new DatabaseHelper(getContext());
         isfounded =Database.SelectMovie(id);
         if (isfounded){
@@ -133,6 +136,8 @@ public class DetailActivityFragment extends Fragment {
         }else {
             favorite.setTextOn("Un Favorite");
         }
+
+
         favorite.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
