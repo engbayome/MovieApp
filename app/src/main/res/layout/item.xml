@@ -15,7 +15,7 @@
         android:gravity="center_horizontal"
         android:textColor="#000000"
         android:id="@+id/title_movie"
-        android:background="#E91E63"/>
+        android:background="#F8BBD0"/>
 
 
 </FrameLayout>

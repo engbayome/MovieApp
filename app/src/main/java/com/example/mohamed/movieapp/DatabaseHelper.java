@@ -43,7 +43,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public boolean InsertMovie (String id,String image,String title,String json){
-        //TODO CHECK IF IT EXIT and remove
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(ID, id);

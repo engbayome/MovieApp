@@ -125,6 +125,8 @@ public class MainActivityFragment extends Fragment {
             dataAdapter = Database.getData();
             CustomArrayAdapter adapter =new CustomArrayAdapter(getContext() , R.layout.item , dataAdapter);
             gridView.setAdapter(adapter);
+            FirstJSON = dataAdapter[0].json;
+            saveFirstMovie(FirstJSON);
         }else{
             DataTask.execute(location);
         }

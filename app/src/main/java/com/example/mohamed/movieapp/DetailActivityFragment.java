@@ -47,7 +47,7 @@ public class DetailActivityFragment extends Fragment {
     ListView list_view;
     int NumOfTrailers;
     DatabaseHelper Database;
-    ToggleButton favorite;
+    ImageButton favorite;
     boolean isfounded;
 
 
@@ -114,7 +114,7 @@ public class DetailActivityFragment extends Fragment {
         Title = detailAdapter[0];
         image = detailAdapter[1];
 
-        favorite = (ToggleButton) header.findViewById(R.id.favorit_btn);
+        favorite = (ImageButton) header.findViewById(R.id.favorite);
 
         list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -132,17 +132,16 @@ public class DetailActivityFragment extends Fragment {
         Database = new DatabaseHelper(getContext());
         isfounded =Database.SelectMovie(id);
         if (isfounded){
-            favorite.setTextOff("Favorite");
+            favorite.setImageResource(R.drawable.star_light);
         }else {
-            favorite.setTextOn("Un Favorite");
+            favorite.setImageResource(R.drawable.star_dark);
         }
-
 
         favorite.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        isfounded =Database.SelectMovie(id);
+                        isfounded = Database.SelectMovie(id);
                         if (isfounded){
                             int isdeleted = Database.DeleteMovie(id);
                             if (isdeleted != 0){
@@ -150,7 +149,7 @@ public class DetailActivityFragment extends Fragment {
                             }else{
                                 Toast.makeText(getActivity(),"Data doesnot from favorited",Toast.LENGTH_LONG).show();
                             }
-                            favorite.setTextOff("Favorite");
+                            favorite.setImageResource(R.drawable.star_dark);
                         }else
                         {
                             boolean isInserted = Database.InsertMovie(id,image,Title,json);
@@ -159,10 +158,12 @@ public class DetailActivityFragment extends Fragment {
                             }else{
                                 Toast.makeText(getActivity(),"Data not inserted",Toast.LENGTH_LONG).show();
                             }
-                            favorite.setTextOn("Un Favorite");
+                            favorite.setImageResource(R.drawable.star_light);
                         }
                     }
-                });
+                }
+        );
+
         return rootView;
     }
 
